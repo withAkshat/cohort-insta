@@ -1,7 +1,7 @@
 const jwt = require("jsonwebtoken");
-const crypto = require("crypto");
+const bcrypt = require("bcrypt");
 const userModel = require("../models/user.model");
-const { log } = require("console");
+
 
 const userRegister = async (req, res) => {
     const { username, email, password, bio, profileImage } = req.body;
@@ -15,27 +15,35 @@ const userRegister = async (req, res) => {
 
     if (isUserExists) {
         res.status(409).json({
-            message: "User already exists!"
+            message: "User already exists!" + (isUserExists == email ? "email already exists" : "username already exists")
         })
         return;
     }
 
+    const hash = await bcrypt.hash(password, 10);
+
     const user = await userModel.create({
         username,
         email,
-        password: crypto.createHash("sha256").update(password).digest("hex"),
+        password: hash,
         bio,
         profileImage
     })
 
-    const token = jwt.sign({
-        email
-    }, process.env.JWT_SECRET)
+    const token = jwt.sign(
+        {email}, 
+        process.env.JWT_SECRET,
+        {expiresIn:"1d"}
+    )
 
-    res.status(201).json({
+    res.status(201).cookie("jwt_token", token).json({
         message: "User registered sucessfully!",
-        email: user.email,
-        username: user.username,
+        user: {
+            email: user.email,
+            username: user.username,
+            bio: user.bio,
+            profileImage: user.profileImage
+        },
         token
     })
 
@@ -45,23 +53,21 @@ const userRegister = async (req, res) => {
 const userLogin = async (req, res) => {
     const { email, username, password } = req.body;
 
-    const isUserExists = await userModel.findOne({
+    const user = await userModel.findOne({
         $or: [
             { email: email },
             { username: username }
         ]
     })
-    console.log(isUserExists);
-    if (!isUserExists) {
 
+    if (!user) {
         res.status(409).json({
             message: "User does not exist!"
         })
-
         return;
     }
 
-    const isPasswordMatched = isUserExists.password == crypto.createHash("sha256").update("password").digest("hex");
+    const isPasswordMatched = await bcrypt.compare(password, user.password);
 
     if (!isPasswordMatched) {
         res.status(401).json({
@@ -72,7 +78,7 @@ const userLogin = async (req, res) => {
 
     const token = jwt.sign(
 
-        { id: isUserExists._id },
+        { id: user._id },
         process.env.JWT_SECRET,
         { expiresIn: "1d" }
     );
@@ -80,8 +86,8 @@ const userLogin = async (req, res) => {
     res.status(200).cookie("jwt_token", token).json({
         message: "User logined!",
         user: {
-            username: isUserExists.username,
-            email: isUserExists.email,
+            username: user.username,
+            email: user.email,
         },
         token
     })
