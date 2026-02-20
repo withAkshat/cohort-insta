@@ -31,9 +31,12 @@ const userRegister = async (req, res) => {
     })
 
     const token = jwt.sign(
-        {id:user._id}, 
+        {
+            id: user._id,
+            username: user.username
+        },
         process.env.JWT_SECRET,
-        {expiresIn:"1d"}
+        { expiresIn: "1d" }
     )
 
     res.status(201).cookie("token", token).json({
@@ -76,7 +79,10 @@ const userLogin = async (req, res) => {
 
     const token = jwt.sign(
 
-        { id: user._id },
+        {
+            id: user._id,
+            username: user.username
+        },
         process.env.JWT_SECRET,
         { expiresIn: "1d" }
     );
@@ -92,5 +98,20 @@ const userLogin = async (req, res) => {
 
 }
 
-module.exports = { userRegister, userLogin };
+const getMe = async (req, res)=>{
+    const userId = req.user.id;
+
+    const user = await userModel.findById(userId)
+
+    res.status(200).json({
+        user:{
+            username: user.username,
+            email: user.email,
+            bio: user.bio,
+            profileImage: user.profileImage
+        }
+    })
+}
+
+module.exports = { userRegister, userLogin, getMe };
 

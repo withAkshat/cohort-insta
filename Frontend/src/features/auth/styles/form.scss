@@ -1,0 +1,50 @@
+main {
+
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    .form-container {
+        min-width: 400px;
+
+        display: flex;
+        flex-direction: column;
+        gap: 0.7rem;
+
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+
+            input {
+                background-color: rgb(243, 251, 255);
+                padding: 0.5rem 0.4rem;
+                outline: none;
+                border: none;
+                border-radius: 0.5rem;
+            }
+
+            input::placeholder {
+                color: rgb(64, 64, 64);
+            }
+        }
+
+        button {
+            color: whitesmoke;
+            background-color: rgb(162, 28, 28);
+            padding: 0.5rem 0.4rem;
+            outline: none;
+            border: none;
+            border-radius: 0.5rem;
+        }
+
+        p {
+
+            .link {
+                color: rgb(162, 28, 28);
+                text-decoration: none;
+            }
+        }
+    }
+}

@@ -21,8 +21,6 @@ async function identifyUser(req, res, next){
     }
 
     req.user = decoded;
-
-    console.log("aaya tha mai yahan!");
     
     next();
 }

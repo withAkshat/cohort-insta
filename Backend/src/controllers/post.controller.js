@@ -1,4 +1,5 @@
 const postModel = require("../models/post.model.js");
+const likeModel = require("../models/like.model.js");
 const ImageKit = require("@imagekit/nodejs");
 const { toFile } = require("@imagekit/nodejs");
 const imageKit = new ImageKit({
@@ -38,7 +39,6 @@ async function showPost(req, res) {
     })
 }
 
-
 async function postDetails(req, res) {
 
     const { postId }= req.params;
@@ -66,5 +66,40 @@ async function postDetails(req, res) {
     })
 }
 
+async function likePost(req, res){
 
-module.exports = { createPost, showPost, postDetails }
+    const postId = req.params.postId;
+    const username = req.user.username;
+
+    const isPostFound = await postModel.findById(postId);
+
+    if(!isPostFound){
+        return res.status(404).json({
+            message: "Post not found"
+        })
+    }
+
+    const isAlreadyLiked = await likeModel.findOne({
+        post: postId,
+        user : username,
+    })
+
+    if(isAlreadyLiked){
+        return res.status(200).json({
+            message: `Post already liked!`
+        })
+    }
+
+    const likeRecord = await likeModel.create({
+        post: postId,
+        user : username,
+    })
+
+    res.status(200).json({
+        message:"Post liked sucessfully",
+        likeRecord
+    })
+}
+
+
+module.exports = { createPost, showPost, postDetails, likePost }
