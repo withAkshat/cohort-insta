@@ -59,7 +59,7 @@ const userLogin = async (req, res) => {
             { email: email },
             { username: username }
         ]
-    })
+    }).select("+password")
 
     if (!user) {
         res.status(409).json({

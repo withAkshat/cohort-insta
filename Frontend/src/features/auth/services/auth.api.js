@@ -1,29 +1,28 @@
 import axios from "axios";
 
 const api = axios.create({
-    baseUrl: "http://localhost:3000/api/auth",
-    withCredentials: true
+    baseURL: "http://localhost:3000/api/auth",
+    withCredentials: true,
 })
 
 
 export async function login(username, password){
 
     try{
-        const resposnse = await api.post("/login", {username, password});
-        return resposnse.data;
+        const response = await api.post("/login", {username, password});
+        return response.data;
 
-    }catch(err){
+    }catch(err){        
         throw err
     }
-
 }
 
 export async function register(username, email, password){
 
     try {
         
-        const resposnse = await api.post("/login", {username, email, password});
-        return resposnse.data;
+        const response = await api.post("/register", {username, email, password});
+        return response.data;
     } catch (err) {
 
         throw err
@@ -40,3 +39,5 @@ export async function getMe(){
         throw err
     }
 }
+
+// API call

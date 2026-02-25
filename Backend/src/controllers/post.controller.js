@@ -29,7 +29,7 @@ async function createPost(req, res) {
 }
 
 async function showPost(req, res) {
-    
+
     const userId = req.user.id;
     const posts = await postModel.find({ user: userId });
 
@@ -41,12 +41,12 @@ async function showPost(req, res) {
 
 async function postDetails(req, res) {
 
-    const { postId }= req.params;
+    const { postId } = req.params;
     const userId = req.user.id; // from token
 
     const post = await postModel.findById(postId);
 
-    if(!post){
+    if (!post) {
         return res.status(404).json({
             message: "Post not found"
         })
@@ -54,26 +54,26 @@ async function postDetails(req, res) {
 
     const isValidUser = post.user.toString() === userId;
 
-    if(!isValidUser){
+    if (!isValidUser) {
         return res.status(403).json({
             message: "Forbidden Content"
         })
     }
 
     res.status(200).json({
-        message:"Post fetched!",
+        message: "Post fetched!",
         post
     })
 }
 
-async function likePost(req, res){
+async function likePost(req, res) {
 
     const postId = req.params.postId;
     const username = req.user.username;
 
     const isPostFound = await postModel.findById(postId);
 
-    if(!isPostFound){
+    if (!isPostFound) {
         return res.status(404).json({
             message: "Post not found"
         })
@@ -81,10 +81,10 @@ async function likePost(req, res){
 
     const isAlreadyLiked = await likeModel.findOne({
         post: postId,
-        user : username,
+        user: username,
     })
 
-    if(isAlreadyLiked){
+    if (isAlreadyLiked) {
         return res.status(200).json({
             message: `Post already liked!`
         })
@@ -92,14 +92,46 @@ async function likePost(req, res){
 
     const likeRecord = await likeModel.create({
         post: postId,
-        user : username,
+        user: username,
     })
 
     res.status(200).json({
-        message:"Post liked sucessfully",
+        message: "Post liked sucessfully",
         likeRecord
     })
 }
 
 
-module.exports = { createPost, showPost, postDetails, likePost }
+async function getAllPosts(req, res) {
+
+    const user = req.user
+    console.log(user);
+    
+
+    const allPosts = await Promise.all((await postModel.find().populate("user").lean())
+
+    /**
+     * typeof post mongoose object! 
+     */
+        .map(async (post) => {
+
+            const isLiked = await likeModel.findOne({
+                user: user.username,
+                post: post._id
+            })
+
+            post.isLiked = !!isLiked
+
+            return post;
+        }))
+
+
+    res.status(200).json({
+        message: "ho gaya",
+        allPosts
+    })
+
+}
+
+
+module.exports = { createPost, showPost, postDetails, likePost, getAllPosts }

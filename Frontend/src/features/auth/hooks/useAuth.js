@@ -1,6 +1,6 @@
 import { useContext } from "react";
-import { AuthContext } from "../auth.context.js";
-import { login } from "../services/auth.api.js";
+import { AuthContext } from "../auth.context.jsx";
+import { login, register } from "../services/auth.api.js";
 
 
 export function useAuth() {
@@ -8,16 +8,16 @@ export function useAuth() {
     const authContext = useContext(AuthContext);
     const { loading, setLoading, user, setUser } = authContext
 
-    const loginHandler = async () => {
+    const loginHandler = async (username, password) => {
 
         setLoading(true)
         const response = await login(username, password);
+        
         setUser(response.user);
         setLoading(false)
-
     }
 
-    const registerHandler = async () => {
+    const registerHandler = async (username, email, password) => {
 
         setLoading(true);
         const response = await register(username, email, password);
@@ -26,5 +26,5 @@ export function useAuth() {
     }
 
 
-    return {loading, user, loginHandler, registerHandler};
+    return { loading, user, loginHandler, registerHandler };
 }

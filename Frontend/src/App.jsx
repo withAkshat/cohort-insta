@@ -1,13 +1,16 @@
 import AppRoutes from "./AppRoutes.jsx"
-import { AuthProvider } from "./features/auth/auth.context.jsx"
-import "./features/style.scss"
+import AuthProvider from "./features/auth/auth.context.jsx"
+import PostContextProvider from "./features/post/post.context.jsx"
+import "./features/shared/global.scss"
 
 function App() {
 
 
   return (
     <AuthProvider>
-      <AppRoutes />
+      <PostContextProvider>
+        <AppRoutes />
+      </PostContextProvider>
     </AuthProvider>
   )
 }

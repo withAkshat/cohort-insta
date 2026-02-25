@@ -17,9 +17,14 @@ const authRotuer = require("./routes/auth.routes.js");
 const postRouter = require("./routes/post.routes.js");
 const userRouter = require("./routes/user.routes.js");
 
+app.use((req, res, next) => {
+  console.log("Requested URL:", req.originalUrl);
+  next();
+});
+
 // using routes
 app.use("/api/auth", authRotuer);
-app.use("/api/users", userRouter);
+app.use("/api/user", userRouter);
 app.use("/api/post", postRouter);
 
 module.exports = app;
