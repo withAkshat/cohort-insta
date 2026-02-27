@@ -101,6 +101,38 @@ async function likePost(req, res) {
     })
 }
 
+async function unLikePost(req, res) {
+
+    const postId = req.params.postId;
+    const username = req.user.username;
+
+    const isPostFound = await postModel.findById(postId);
+
+    if (!isPostFound) {
+        return res.status(404).json({
+            message: "Post not found"
+        })
+    }
+
+    const isLiked = await likeModel.findOne({
+        post: postId,
+        user: username,
+    })
+
+    if (!isLiked) {
+        return res.status(400).json({
+            message: `Post didn't like!`
+        })
+    }
+
+    const likeRecord = await likeModel.findOneAndDelete({_id: isLiked._id})
+
+    res.status(200).json({
+        message: "Post unliked sucessfully",
+        likeRecord
+    })
+}
+
 
 async function getAllPosts(req, res) {
 
@@ -108,7 +140,7 @@ async function getAllPosts(req, res) {
     console.log(user);
     
 
-    const allPosts = await Promise.all((await postModel.find().populate("user").lean())
+    const allPosts = await Promise.all((await postModel.find().sort({_id: -1}).populate("user").lean())
 
     /**
      * typeof post mongoose object! 
@@ -134,4 +166,4 @@ async function getAllPosts(req, res) {
 }
 
 
-module.exports = { createPost, showPost, postDetails, likePost, getAllPosts }
+module.exports = { createPost, showPost, postDetails, likePost, unLikePost, getAllPosts }

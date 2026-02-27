@@ -1,5 +1,5 @@
 const express = require("express");
-const {createPost, showPost, postDetails, likePost, getAllPosts} = require("../controllers/post.controller.js");
+const {createPost, showPost, postDetails, likePost, unLikePost, getAllPosts} = require("../controllers/post.controller.js");
 const identifyUser = require("../middlewares/auth.middleware.js");
 const multer  = require('multer');
 const upload = multer({ storage: multer.memoryStorage() });
@@ -20,6 +20,12 @@ postRouter.get("/details/:postId", identifyUser, postDetails)
  * @description like a post with id porvided in the params
  */
 postRouter.post("/like/:postId", identifyUser, likePost)
+
+/**
+ * @route POST api/post/unlike/:postId
+ * @description like a post with id porvided in the params
+ */
+postRouter.post("/unlike/:postId", identifyUser, unLikePost)
 
 /**
  * @route GET api/post/feed
