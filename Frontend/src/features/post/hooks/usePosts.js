@@ -1,6 +1,6 @@
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import { PostContext } from "../post.context.jsx"
-import { getFeed } from "../services/post.api.js"
+import { createPost, getFeed, likePost, unLikePost } from "../services/post.api.js"
 
 export function usePosts() {
 
@@ -15,6 +15,31 @@ export function usePosts() {
 
     }
 
-    return {loading, feed, post, handleGetFeed}
+    async function handleCreatePost(imageFile, caption){
+
+        setLoading(true)
+        const data = await createPost(imageFile, caption)
+        setFeed([data.post, ...feed])
+        setLoading(false)
+    }
+
+    async function handleLike(post){
+        setLoading(true)
+        await likePost(post)
+        setLoading(false)
+    }
+  
+    async function handleUnLike(post){
+        setLoading(true)
+        await unLikePost(post)
+        setLoading(false)
+    }
+
+    // initial hydration
+    useEffect(()=>{
+        handleGetFeed();
+    }, [])
+
+    return {loading, feed, post, handleGetFeed, handleCreatePost, handleLike, handleUnLike}
 }
 

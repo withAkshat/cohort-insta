@@ -14,6 +14,37 @@ async function getFeed(){
 
 }
 
+async function createPost(imageFile, caption){
+
+    const formData = new FormData()
+
+    formData.append("img", imageFile)
+    formData.append("caption", caption)
+
+    const response = await api.post("/", formData)
+
+    return response.data;
+}
+
+async function likePost(postId){
+
+    const response = await api.post("/like/" + postId);
+
+    return response.data;
+
+}
+
+async function unLikePost(postId){
+
+    const response = await api.post("/unlike/" + postId);
+
+    return response.data;
+
+}
+
 export {
-    getFeed
+    getFeed,
+    createPost,
+    likePost,
+    unLikePost
 }

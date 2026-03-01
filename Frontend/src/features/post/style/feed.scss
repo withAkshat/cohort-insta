@@ -1,0 +1,42 @@
+main{
+    flex-grow: 1;
+}
+.feed-page {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    justify-content: flex-start;
+    position: relative;
+
+    .follows {
+        height: 100%;
+        width: 100%;
+        max-width: 300px;
+        background-color: antiquewhite;
+        flex-shrink: 0;
+        left: 0;
+        position: absolute;
+    }
+    
+    .feed {
+        height: 100%;
+        width: 100%;
+        max-width: 400px;
+        transform: translateX(-50%);
+        position: absolute;
+        left: 50%;
+
+        .posts {
+            width: 100%;
+            height: 100%;
+            // background-color: aqua;
+
+            overflow-y: scroll;
+
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+    }
+
+}
